@@ -21,6 +21,8 @@ export default (): ExpoConfig => ({
   ios: {
     supportsTablet: true,
     icon: {
+      dark: "./src/assets/icons/icon.png",
+      light: "./src/assets/icons/icon.png",
       tinted: "./src/assets/icons/ios-tinted.png",
     },
   },
