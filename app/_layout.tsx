@@ -42,6 +42,7 @@ export default function RootLayout() {
         <Stack.Screen
           name="index"
           options={{
+            headerShadowVisible: false,
             headerStyle: { backgroundColor: Colors.identity.primary },
             headerTitle: "",
             headerLeft: () => (

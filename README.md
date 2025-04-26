@@ -8,4 +8,4 @@
 
 ## Design 🤌
 
-The [design](https://www.figma.com/community/file/979132880663340794) was made by Ricardo Schiniegoski.
+The [design](https://www.figma.com/community/file/979132880663340794) was made by [Ricardo Schiniegoski](https://ricardohs.com.br).
