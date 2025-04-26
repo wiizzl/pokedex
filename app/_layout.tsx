@@ -17,12 +17,12 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
-    if (loaded) {
+    if (loaded || error) {
       hideAsync();
     }
-  }, [loaded]);
+  }, [loaded, error]);
 
-  if (!loaded || error) return null;
+  if (!loaded && !error) return null;
 
   return (
     <Stack>
