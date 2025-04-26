@@ -64,7 +64,7 @@ export default function PokemonScreen() {
           }}
         >
           <Image
-            source={require("@/assets/image.png")}
+            source={require("@/assets/images/silhouette.png")}
             style={{
               width: 200,
               height: 200,

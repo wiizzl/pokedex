@@ -31,7 +31,7 @@ const PokemonCard = (props: PokemonCardProps) => {
         #{props.id}
       </Text>
       <View>
-        <Image source={require("@/assets/image.png")} style={{ width: 100, height: 100 }} />
+        <Image source={require("@/assets/images/silhouette.png")} style={{ width: 100, height: 100 }} />
         <View
           style={{
             backgroundColor: Colors.grayscale.background,
@@ -59,4 +59,8 @@ const PokemonCard = (props: PokemonCardProps) => {
   );
 };
 
-export { PokemonCard };
+const PokemonCardSkeleton = () => {
+  return <View></View>;
+};
+
+export { PokemonCard, PokemonCardSkeleton };

@@ -1,7 +1,10 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { isRunningInExpoGo } from "expo";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { hideAsync, preventAutoHideAsync, setOptions } from "expo-splash-screen";
-import { useEffect } from "react";
+import { StatusBar } from "expo-status-bar";
+import { useEffect, useState } from "react";
 import { View } from "react-native";
 
 import { Icons } from "@/components/icons";
@@ -11,12 +14,16 @@ import { Colors } from "@/constants/colors";
 
 preventAutoHideAsync();
 
-setOptions({
-  duration: 400,
-  fade: true,
-});
+if (!isRunningInExpoGo()) {
+  setOptions({
+    duration: 400,
+    fade: true,
+  });
+}
 
 export default function RootLayout() {
+  const [queryClient] = useState(() => new QueryClient());
+
   const [loaded, error] = useFonts({
     SpaceMono: require("@/assets/fonts/SpaceMono-Regular.ttf"),
   });
@@ -30,34 +37,37 @@ export default function RootLayout() {
   if (!loaded && !error) return null;
 
   return (
-    <Stack>
-      <Stack.Screen
-        name="index"
-        options={{
-          headerStyle: { backgroundColor: Colors.identity.primary },
-          headerTitle: "",
-          headerLeft: () => (
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 15,
-              }}
-            >
-              <Icons.pokeball fill={Colors.grayscale.white} />
-              <Text style={{ fontSize: 24, fontWeight: "bold" }}>Pokédex</Text>
-            </View>
-          ),
-        }}
-      />
-      <Stack.Screen
-        name="pokemon/[id]"
-        options={{
-          headerTransparent: true,
-          presentation: "modal",
-          headerTitle: "",
-        }}
-      />
-    </Stack>
+    <QueryClientProvider client={queryClient}>
+      <Stack>
+        <Stack.Screen
+          name="index"
+          options={{
+            headerStyle: { backgroundColor: Colors.identity.primary },
+            headerTitle: "",
+            headerLeft: () => (
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 15,
+                }}
+              >
+                <Icons.pokeball fill={Colors.grayscale.white} />
+                <Text style={{ fontSize: 24, fontWeight: "bold" }}>Pokédex</Text>
+              </View>
+            ),
+          }}
+        />
+        <Stack.Screen
+          name="pokemon/[id]"
+          options={{
+            headerTransparent: true,
+            presentation: "modal",
+            headerTitle: "",
+          }}
+        />
+      </Stack>
+      <StatusBar style="light" />
+    </QueryClientProvider>
   );
 }
