@@ -1,5 +1,5 @@
 import { Link, Redirect, Stack, useLocalSearchParams } from "expo-router";
-import { Image, View } from "react-native";
+import { Image, SafeAreaView, View } from "react-native";
 
 import { Icons } from "@/components/icons";
 import { Text } from "@/components/text";
@@ -45,13 +45,16 @@ export default function PokemonScreen() {
               <Text style={{ fontSize: 28, fontWeight: "bold" }}>Bulbasaur</Text>
             </View>
           ),
-          headerRight: () => <Text style={{ fontSize: 16, marginTop: 5, fontWeight: "bold" }}>#001</Text>,
+          headerRight: () => <Text style={{ fontSize: 16, fontWeight: "bold" }}>#001</Text>,
         }}
       />
-      <View style={{ flex: 1, backgroundColor: Colors.pokemon.grass }}>
-        <View style={{ alignItems: "flex-end", marginTop: 20, marginRight: 20 }}>
-          <Image source={require("@/assets/images/pokeball.png")} style={{ width: 250, height: 250, opacity: 0.1 }} />
-        </View>
+      <View style={{ alignItems: "flex-end", backgroundColor: Colors.pokemon.grass }}>
+        <Image
+          source={require("@/assets/images/pokeball.png")}
+          style={{ width: 220, height: 220, opacity: 0.1, marginVertical: 10, marginRight: 10 }}
+        />
+      </View>
+      <SafeAreaView style={{ flex: 1, backgroundColor: Colors.pokemon.grass }}>
         <View
           style={{
             flex: 1,
@@ -74,7 +77,7 @@ export default function PokemonScreen() {
               marginLeft: -90,
             }}
           />
-          <View style={{ marginTop: -30, gap: 25 }}>
+          <View style={{ flex: 1, marginTop: -40, gap: 15 }}>
             <View style={{ justifyContent: "center", flexDirection: "row", gap: 18 }}>
               <Badge color={Colors.pokemon.grass}>Grass</Badge>
               <Badge color={Colors.pokemon.poison}>Poison</Badge>
@@ -122,7 +125,7 @@ export default function PokemonScreen() {
             </View>
           </View>
         </View>
-      </View>
+      </SafeAreaView>
     </>
   );
 }

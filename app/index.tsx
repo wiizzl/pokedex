@@ -5,21 +5,27 @@ import { Input } from "@/components/input";
 
 import { PokemonGrid } from "@/features/pokemon/pokemon-grid";
 
+import { useFilterStore } from "@/hooks/filter-store";
+
 import { Colors } from "@/constants/colors";
 
 export default function IndexScreen() {
+  const { search, sort, setSearch, setSort } = useFilterStore();
+  const isSortedById = sort === "id";
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.identity.primary }}>
       <View
         style={{
-          marginHorizontal: 10,
+          marginHorizontal: 15,
           marginTop: 10,
           flexDirection: "row",
           gap: 25,
         }}
       >
-        <Input placeholder="Search" style={{ flex: 1 }} />
+        <Input placeholder="Search" style={{ flex: 1 }} value={search} onChangeText={setSearch} />
         <Pressable
+          onPress={() => setSort(isSortedById ? "name" : "id")}
           style={{
             backgroundColor: Colors.grayscale.white,
             borderRadius: 50,
@@ -28,17 +34,20 @@ export default function IndexScreen() {
             justifyContent: "center",
           }}
         >
-          <Icons.filter fill={Colors.identity.primary} />
+          {isSortedById ? (
+            <Icons.hashtag fill={Colors.identity.primary} />
+          ) : (
+            <Icons.aletter fill={Colors.identity.primary} />
+          )}
         </Pressable>
       </View>
       <View
         style={{
           flex: 1,
-          marginTop: 30,
+          marginTop: 25,
           backgroundColor: Colors.grayscale.white,
-          marginHorizontal: 10,
+          marginHorizontal: 8,
           borderRadius: 18,
-          paddingHorizontal: 20,
         }}
       >
         <PokemonGrid />
