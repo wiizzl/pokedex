@@ -1,23 +1,19 @@
-import { useQuery } from "@tanstack/react-query";
-import { Link } from "expo-router";
-import { useState } from "react";
-import { FlatList, RefreshControl, View } from "react-native";
-
-import { Text } from "@/components/text";
-
-import { PokemonCard, PokemonCardSkeleton } from "@/features/pokemon/pokemon-card";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
 import { useDebounce } from "@/hooks/debounce";
-
-import { fetchPokemon, fetchPokemonDetails } from "@/api/pokemon";
-
-import { Colors } from "@/constants/colors";
 import { useFilterStore } from "@/hooks/filter-store";
-import { Pokemon, PokemonListResult } from "@/types/pokemon";
+
+import { fetchPokemonList } from "@/api/pokemon";
+import { Text } from "@/components/text";
+import { Colors } from "@/constants/colors";
+import { PokemonDetails } from "@/types/pokemon";
+import { Link } from "expo-router";
+import { ActivityIndicator, FlatList, View } from "react-native";
+import { PokemonCard, PokemonCardSkeleton } from "./pokemon-card";
+
+const PAGE_SIZE = 21;
 
 const PokemonGrid = () => {
-  const [refreshing, setRefreshing] = useState(false);
-
   const { search, sort } = useFilterStore();
 
   const debouncedFilters = {
@@ -25,37 +21,30 @@ const PokemonGrid = () => {
     sort: useDebounce(sort, 500),
   };
 
-  const { data, isLoading, isError, error, refetch } = useQuery({
-    queryKey: ["pokemons", { ...debouncedFilters }],
-    queryFn: () =>
-      fetchPokemon([
-        { key: "limit", value: "15" },
-        { key: "offset", value: "0" },
-      ]),
-  });
+  const { data, isLoading, error, isError, fetchNextPage, hasNextPage, refetch, isFetchingNextPage } = useInfiniteQuery(
+    {
+      queryKey: ["pokemonList"],
+      queryFn: ({ pageParam = 0 }) => fetchPokemonList(pageParam as number, PAGE_SIZE),
+      getNextPageParam: (lastPage, allPages) => {
+        if (!lastPage || lastPage.length < PAGE_SIZE) return undefined;
 
-  const {
-    data: pokemonDetails,
-    isLoading: isDetailsLoading,
-    refetch: detailsRefetch,
-  } = useQuery({
-    queryKey: ["pokemonDetails", data?.results],
-    queryFn: () => Promise.all(data?.results.map((item: PokemonListResult) => fetchPokemonDetails(item.url)) || []),
-    enabled: !!data?.results,
-  });
+        return allPages.length * PAGE_SIZE;
+      },
+      initialPageParam: 0,
+    }
+  );
 
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    await refetch();
-    await detailsRefetch();
-    setRefreshing(false);
+  const flatData = data?.pages?.flat() || [];
+
+  const handleEndReached = () => {
+    if (hasNextPage && !isFetchingNextPage) fetchNextPage();
   };
 
   return (
     <>
-      {(isLoading || isDetailsLoading) && (
+      {isLoading && (
         <FlatList
-          data={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]}
+          data={[...Array(12 * 2).keys()]}
           numColumns={3}
           renderItem={() => (
             <View style={{ marginVertical: 8 }}>
@@ -71,18 +60,11 @@ const PokemonGrid = () => {
 
       {isError && (
         <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <Text
-            style={{
-              textAlign: "center",
-              color: Colors.grayscale.dark,
-            }}
-          >
-            Error : {error.message}
-          </Text>
+          <Text style={{ textAlign: "center", color: Colors.grayscale.dark }}>Error : {error.message}</Text>
         </View>
       )}
 
-      {!isLoading && !isError && pokemonDetails?.length === 0 && (
+      {!isLoading && !isError && flatData.length === 0 && (
         <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
           <Text
             style={{
@@ -99,11 +81,11 @@ const PokemonGrid = () => {
         </View>
       )}
 
-      {pokemonDetails && pokemonDetails.length !== 0 && (
+      {flatData.length !== 0 && (
         <FlatList
-          data={pokemonDetails}
+          data={flatData}
           numColumns={3}
-          renderItem={({ item }: { item: Pokemon }) => (
+          renderItem={({ item }: { item: PokemonDetails }) => (
             <Link
               href={{
                 pathname: "/pokemon/[id]",
@@ -111,18 +93,16 @@ const PokemonGrid = () => {
               }}
               style={{ marginVertical: 8 }}
             >
-              <PokemonCard
-                id={item.id}
-                name={item.name}
-                image={item.sprites.other?.["official-artwork"].front_default!}
-              />
+              <PokemonCard id={item.id} name={item.name} image={item.sprites.other?.home.front_default} />
             </Link>
           )}
           keyExtractor={(item) => item.id.toString()}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 8, paddingTop: 8 }}
           columnWrapperStyle={{ justifyContent: "space-evenly" }}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
+          onEndReached={handleEndReached}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={isFetchingNextPage ? <ActivityIndicator /> : null}
         />
       )}
     </>

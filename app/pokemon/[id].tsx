@@ -114,7 +114,7 @@ export default function PokemonScreen() {
                     {stats.map((item, index) => (
                       <View style={{ flexDirection: "row", gap: 12, alignItems: "center" }} key={index}>
                         <Text style={{ color: Colors.grayscale.dark, fontSize: 18 }}>
-                          {item.value.toString().padStart(3, "0")}
+                          {item.value.toString().padStart(4, "0")}
                         </Text>
                         <Progress value={item.value / 100} color={Colors.pokemon.grass} />
                       </View>

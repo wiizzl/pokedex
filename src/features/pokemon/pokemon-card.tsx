@@ -30,7 +30,7 @@ const PokemonCard = (props: PokemonCardProps) => {
           marginRight: 10,
         }}
       >
-        #{props.id.toString().padStart(3, "0")}
+        #{props.id.toString().padStart(4, "0")}
       </Text>
       <View
         style={{
