@@ -34,7 +34,6 @@ export default function RootLayout() {
           headerLeft: () => (
             <View
               style={{
-                display: "flex",
                 flexDirection: "row",
                 alignItems: "center",
                 gap: 15,

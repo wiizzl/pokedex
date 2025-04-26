@@ -39,7 +39,6 @@ export default function IndexScreen() {
           marginHorizontal: 10,
           borderRadius: 18,
           paddingHorizontal: 20,
-          padding: 30,
         }}
       >
         <FlatList
@@ -61,7 +60,7 @@ export default function IndexScreen() {
           )}
           keyExtractor={(item) => item.id}
           columnWrapperStyle={{ gap: 16 }}
-          // contentContainerStyle={{ gap: 16 }}
+          showsVerticalScrollIndicator={false}
         />
       </View>
     </SafeAreaView>

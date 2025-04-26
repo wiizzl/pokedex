@@ -14,18 +14,22 @@ export default (): ExpoConfig => ({
   githubUrl: "https://github.com/wiizzl/pokedex",
   orientation: "portrait",
   userInterfaceStyle: "dark",
-  backgroundColor: "#DC0A2D",
+  backgroundColor: "#212121",
   primaryColor: "#DC0A2D",
-  icon: "./src/assets/images/app/icon.png",
+  icon: "./src/assets/icons/icon.png",
   scheme: pckJson.name,
   newArchEnabled: true,
   ios: {
     supportsTablet: true,
+    icon: {
+      tinted: "./src/assets/icons/ios-tinted.png",
+    },
   },
   android: {
     versionCode: parseInt(pckJson.version.replaceAll(".", "") + "0"),
     adaptiveIcon: {
-      foregroundImage: "./src/assets/images/app/adaptive-icon.png",
+      foregroundImage: "./src/assets/icons/adaptive-icon.png",
+      monochromeImage: "./src/assets/icons/adaptive-icon.png",
       backgroundColor: "#DC0A2D",
     },
   },
@@ -34,7 +38,7 @@ export default (): ExpoConfig => ({
     [
       "expo-splash-screen",
       {
-        image: "./src/assets/images/app/splash-icon.png",
+        image: "./src/assets/icons/splash-icon.png",
         imageWidth: 200,
         resizeMode: "contain",
         backgroundColor: "#DC0A2D",

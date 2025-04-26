@@ -5,6 +5,7 @@ import { Icons } from "@/components/icons";
 import { Text } from "@/components/text";
 
 import { Badge } from "@/components/badge";
+import { Progress } from "@/components/progress";
 import { Colors } from "@/constants/colors";
 
 export default function PokemonScreen() {
@@ -17,6 +18,15 @@ export default function PokemonScreen() {
     { icon: null, value: "Chlorophyll Overgrow", label: "Moves" },
   ];
 
+  const stats = [
+    { label: "HP", value: 45 },
+    { label: "ATK", value: 49 },
+    { label: "DEF", value: 49 },
+    { label: "SATK", value: 65 },
+    { label: "SDEF", value: 65 },
+    { label: "SPD", value: 45 },
+  ];
+
   return (
     <>
       <Stack.Screen
@@ -24,7 +34,6 @@ export default function PokemonScreen() {
           headerLeft: () => (
             <View
               style={{
-                display: "flex",
                 flexDirection: "row",
                 alignItems: "center",
                 gap: 15,
@@ -33,14 +42,14 @@ export default function PokemonScreen() {
               <Link href="/" dismissTo>
                 <Icons.chevronleft fill={Colors.grayscale.white} />
               </Link>
-              <Text style={{ fontSize: 24, fontWeight: "bold" }}>{id}</Text>
+              <Text style={{ fontSize: 28, fontWeight: "bold" }}>Bulbasaur</Text>
             </View>
           ),
-          headerRight: () => <Text style={{ fontSize: 18, marginTop: 5 }}>#001</Text>,
+          headerRight: () => <Text style={{ fontSize: 16, marginTop: 5, fontWeight: "bold" }}>#001</Text>,
         }}
       />
       <View style={{ flex: 1, backgroundColor: Colors.pokemon.grass }}>
-        <View style={{ display: "flex", alignItems: "flex-end", marginTop: 20, marginRight: 20 }}>
+        <View style={{ alignItems: "flex-end", marginTop: 20, marginRight: 20 }}>
           <Image source={require("@/assets/images/pokeball.png")} style={{ width: 250, height: 250, opacity: 0.1 }} />
         </View>
         <View
@@ -66,7 +75,7 @@ export default function PokemonScreen() {
             }}
           />
           <View style={{ marginTop: -30, gap: 25 }}>
-            <View style={{ display: "flex", justifyContent: "center", flexDirection: "row", gap: 18 }}>
+            <View style={{ justifyContent: "center", flexDirection: "row", gap: 18 }}>
               <Badge color={Colors.pokemon.grass}>Grass</Badge>
               <Badge color={Colors.pokemon.poison}>Poison</Badge>
             </View>
@@ -85,6 +94,30 @@ export default function PokemonScreen() {
                 <Text style={{ color: Colors.pokemon.grass, textAlign: "center", fontSize: 25, fontWeight: "bold" }}>
                   Base Stats
                 </Text>
+                <View style={{ flexDirection: "row", gap: 18 }}>
+                  <View
+                    style={{ borderRightColor: Colors.grayscale.light, borderRightWidth: 1, paddingRight: 18, gap: 2 }}
+                  >
+                    {stats.map((item, index) => (
+                      <Text
+                        style={{ color: Colors.pokemon.grass, fontWeight: "bold", fontSize: 18, textAlign: "right" }}
+                        key={index}
+                      >
+                        {item.label}
+                      </Text>
+                    ))}
+                  </View>
+                  <View style={{ flex: 1, gap: 2 }}>
+                    {stats.map((item, index) => (
+                      <View style={{ flexDirection: "row", gap: 12, alignItems: "center" }} key={index}>
+                        <Text style={{ color: Colors.grayscale.dark, fontSize: 18 }}>
+                          {item.value.toString().padStart(3, "0")}
+                        </Text>
+                        <Progress value={item.value / 100} color={Colors.pokemon.grass} />
+                      </View>
+                    ))}
+                  </View>
+                </View>
               </View>
             </View>
           </View>
