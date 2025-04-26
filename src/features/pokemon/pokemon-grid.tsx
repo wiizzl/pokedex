@@ -54,9 +54,19 @@ const PokemonGrid = () => {
   return (
     <>
       {(isLoading || isDetailsLoading) && (
-        <View>
-          <PokemonCardSkeleton />
-        </View>
+        <FlatList
+          data={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]}
+          numColumns={3}
+          renderItem={() => (
+            <View style={{ marginVertical: 8 }}>
+              <PokemonCardSkeleton />
+            </View>
+          )}
+          keyExtractor={(item) => item.toString()}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 8, paddingTop: 8 }}
+          columnWrapperStyle={{ justifyContent: "space-evenly" }}
+        />
       )}
 
       {isError && (
