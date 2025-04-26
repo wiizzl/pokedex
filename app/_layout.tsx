@@ -1,6 +1,6 @@
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
-import { hideAsync, preventAutoHideAsync } from "expo-splash-screen";
+import { hideAsync, preventAutoHideAsync, setOptions } from "expo-splash-screen";
 import { useEffect } from "react";
 import { View } from "react-native";
 
@@ -10,6 +10,11 @@ import { Text } from "@/components/text";
 import { Colors } from "@/constants/colors";
 
 preventAutoHideAsync();
+
+setOptions({
+  duration: 400,
+  fade: true,
+});
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
