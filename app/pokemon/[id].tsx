@@ -18,13 +18,14 @@ export default function PokemonScreen() {
   const { data, isLoading, error, isError } = useQuery({
     queryKey: ["pokemonDetails"],
     queryFn: () => fetchPokemonDetails(id.toString()),
+    enabled: !!id,
   });
 
   const getColorFromType = (type: string) => {
     return Colors.pokemon[type as keyof typeof Colors.pokemon];
   };
 
-  const colorType = Colors.pokemon[data?.types[0].type.name as keyof typeof Colors.pokemon];
+  const colorType = getColorFromType(data?.types[0].type.name!);
 
   const about = [
     { icon: <></>, value: "6.9 kg", label: "Weight" },
