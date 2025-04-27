@@ -1,16 +1,16 @@
-import { View } from "react-native";
+import { TextProps, View } from "react-native";
 
 import { Text } from "@/components/text";
 
-type BadgeProps = {
+type BadgeProps = TextProps & {
   color: string;
   children: React.ReactNode;
 };
 
-const Badge = (props: BadgeProps) => {
+const Badge = ({ style, ...props }: BadgeProps) => {
   return (
     <View style={{ borderRadius: 50, backgroundColor: props.color, paddingVertical: 6, paddingHorizontal: 10 }}>
-      <Text>{props.children}</Text>
+      <Text style={style}>{props.children}</Text>
     </View>
   );
 };

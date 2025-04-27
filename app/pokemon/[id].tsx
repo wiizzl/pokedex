@@ -1,16 +1,30 @@
+import { useQuery } from "@tanstack/react-query";
 import { Link, Redirect, Stack, useLocalSearchParams } from "expo-router";
 import { Image, SafeAreaView, View } from "react-native";
 
+import { Badge } from "@/components/badge";
 import { Icons } from "@/components/icons";
+import { Progress } from "@/components/progress";
 import { Text } from "@/components/text";
 
-import { Badge } from "@/components/badge";
-import { Progress } from "@/components/progress";
+import { fetchPokemonDetails } from "@/api/pokemon";
+
 import { Colors } from "@/constants/colors";
 
 export default function PokemonScreen() {
   const { id } = useLocalSearchParams();
   if (!id) return <Redirect href="/" />;
+
+  const { data, isLoading, error, isError } = useQuery({
+    queryKey: ["pokemonDetails"],
+    queryFn: () => fetchPokemonDetails(id.toString()),
+  });
+
+  const getColorFromType = (type: string) => {
+    return Colors.pokemon[type as keyof typeof Colors.pokemon];
+  };
+
+  const colorType = Colors.pokemon[data?.types[0].type.name as keyof typeof Colors.pokemon];
 
   const about = [
     { icon: <></>, value: "6.9 kg", label: "Weight" },
@@ -42,19 +56,21 @@ export default function PokemonScreen() {
               <Link href="/" dismissTo>
                 <Icons.chevronleft fill={Colors.grayscale.white} />
               </Link>
-              <Text style={{ fontSize: 28, fontWeight: "bold" }}>Bulbasaur</Text>
+              <Text style={{ fontSize: 28, fontWeight: "bold", textTransform: "capitalize" }}>{data?.name}</Text>
             </View>
           ),
-          headerRight: () => <Text style={{ fontSize: 16, fontWeight: "bold" }}>#001</Text>,
+          headerRight: () => (
+            <Text style={{ fontSize: 16, fontWeight: "bold" }}>#{id.toString().padStart(4, "0")}</Text>
+          ),
         }}
       />
-      <View style={{ alignItems: "flex-end", backgroundColor: Colors.pokemon.grass }}>
+      <View style={{ alignItems: "flex-end", backgroundColor: colorType }}>
         <Image
           source={require("@/assets/images/pokeball.png")}
           style={{ width: 220, height: 220, opacity: 0.1, marginVertical: 10, marginRight: 10 }}
         />
       </View>
-      <SafeAreaView style={{ flex: 1, backgroundColor: Colors.pokemon.grass }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: colorType }}>
         <View
           style={{
             flex: 1,
@@ -64,29 +80,29 @@ export default function PokemonScreen() {
             padding: 20,
             paddingTop: 100,
             position: "relative",
+            alignItems: "center",
           }}
         >
           <Image
-            source={require("@/assets/images/silhouette.png")}
+            source={{ uri: data?.sprites.other?.["official-artwork"].front_default }}
             style={{
               width: 200,
               height: 200,
               position: "absolute",
               top: -140,
-              left: "50%",
-              marginLeft: -90,
             }}
           />
           <View style={{ flex: 1, marginTop: -40, gap: 15 }}>
             <View style={{ justifyContent: "center", flexDirection: "row", gap: 18 }}>
-              <Badge color={Colors.pokemon.grass}>Grass</Badge>
-              <Badge color={Colors.pokemon.poison}>Poison</Badge>
+              {data?.types.map((item, index) => (
+                <Badge color={getColorFromType(item.type.name)} style={{ textTransform: "capitalize" }} key={index}>
+                  {item.type.name}
+                </Badge>
+              ))}
             </View>
             <View>
               <View style={{ gap: 8 }}>
-                <Text style={{ color: Colors.pokemon.grass, textAlign: "center", fontSize: 25, fontWeight: "bold" }}>
-                  About
-                </Text>
+                <Text style={{ color: colorType, textAlign: "center", fontSize: 25, fontWeight: "bold" }}>About</Text>
                 <View></View>
                 <Text style={{ color: Colors.grayscale.dark }}>
                   There is a plant seed on its back right from the day this Pokémon is born. The seed slowly grows
@@ -94,7 +110,7 @@ export default function PokemonScreen() {
                 </Text>
               </View>
               <View style={{ gap: 8 }}>
-                <Text style={{ color: Colors.pokemon.grass, textAlign: "center", fontSize: 25, fontWeight: "bold" }}>
+                <Text style={{ color: colorType, textAlign: "center", fontSize: 25, fontWeight: "bold" }}>
                   Base Stats
                 </Text>
                 <View style={{ flexDirection: "row", gap: 18 }}>
@@ -103,7 +119,7 @@ export default function PokemonScreen() {
                   >
                     {stats.map((item, index) => (
                       <Text
-                        style={{ color: Colors.pokemon.grass, fontWeight: "bold", fontSize: 18, textAlign: "right" }}
+                        style={{ color: colorType, fontWeight: "bold", fontSize: 18, textAlign: "right" }}
                         key={index}
                       >
                         {item.label}
@@ -116,7 +132,7 @@ export default function PokemonScreen() {
                         <Text style={{ color: Colors.grayscale.dark, fontSize: 18 }}>
                           {item.value.toString().padStart(4, "0")}
                         </Text>
-                        <Progress value={item.value / 100} color={Colors.pokemon.grass} />
+                        <Progress value={item.value / 100} color={colorType} />
                       </View>
                     ))}
                   </View>
