@@ -1,15 +1,19 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { Link } from "expo-router";
+import { ActivityIndicator, FlatList, View } from "react-native";
+
+import { Text } from "@/components/text";
+
+import { PokemonCard, PokemonCardSkeleton } from "@/features/pokemon/pokemon-card";
 
 import { useDebounce } from "@/hooks/debounce";
 import { useFilterStore } from "@/hooks/filter-store";
 
 import { fetchPokemonList } from "@/api/pokemon";
-import { Text } from "@/components/text";
-import { Colors } from "@/constants/colors";
+
 import { PokemonDetails } from "@/types/pokemon";
-import { Link } from "expo-router";
-import { ActivityIndicator, FlatList, View } from "react-native";
-import { PokemonCard, PokemonCardSkeleton } from "./pokemon-card";
+
+import { Colors } from "@/constants/colors";
 
 const PAGE_SIZE = 21;
 
@@ -21,18 +25,16 @@ const PokemonGrid = () => {
     sort: useDebounce(sort, 500),
   };
 
-  const { data, isLoading, error, isError, fetchNextPage, hasNextPage, refetch, isFetchingNextPage } = useInfiniteQuery(
-    {
-      queryKey: ["pokemonList"],
-      queryFn: ({ pageParam = 0 }) => fetchPokemonList(pageParam as number, PAGE_SIZE),
-      getNextPageParam: (lastPage, allPages) => {
-        if (!lastPage || lastPage.length < PAGE_SIZE) return undefined;
+  const { data, isLoading, error, isError, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
+    queryKey: ["pokemonList"],
+    queryFn: ({ pageParam = 0 }) => fetchPokemonList(pageParam, PAGE_SIZE),
+    getNextPageParam: (lastPage, allPages) => {
+      if (!lastPage || lastPage.length < PAGE_SIZE) return undefined;
 
-        return allPages.length * PAGE_SIZE;
-      },
-      initialPageParam: 0,
-    }
-  );
+      return allPages.length * PAGE_SIZE;
+    },
+    initialPageParam: 0,
+  });
 
   const flatData = data?.pages?.flat() || [];
 
@@ -93,7 +95,11 @@ const PokemonGrid = () => {
               }}
               style={{ marginVertical: 8 }}
             >
-              <PokemonCard id={item.id} name={item.name} image={item.sprites.other?.home.front_default} />
+              <PokemonCard
+                id={item.id}
+                name={item.name}
+                image={item.sprites.other?.["official-artwork"].front_default!}
+              />
             </Link>
           )}
           keyExtractor={(item) => item.id.toString()}
