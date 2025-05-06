@@ -46,19 +46,13 @@ export default function PokemonScreen() {
     <>
       <Stack.Screen
         options={{
+          headerTitle: () => (
+            <Text style={{ fontSize: 28, fontWeight: "bold", textTransform: "capitalize" }}>{data?.name}</Text>
+          ),
           headerLeft: () => (
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 15,
-              }}
-            >
-              <Link href="/" dismissTo>
-                <Icons.chevronleft fill={Colors.grayscale.white} />
-              </Link>
-              <Text style={{ fontSize: 28, fontWeight: "bold", textTransform: "capitalize" }}>{data?.name}</Text>
-            </View>
+            <Link href="/" dismissTo>
+              <Icons.chevronleft fill={Colors.grayscale.white} />
+            </Link>
           ),
           headerRight: () => (
             <Text style={{ fontSize: 16, fontWeight: "bold" }}>#{id.toString().padStart(4, "0")}</Text>

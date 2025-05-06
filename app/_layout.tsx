@@ -44,8 +44,7 @@ export default function RootLayout() {
           options={{
             headerShadowVisible: false,
             headerStyle: { backgroundColor: Colors.identity.primary },
-            headerTitle: "",
-            headerLeft: () => (
+            headerTitle: () => (
               <View
                 style={{
                   flexDirection: "row",
