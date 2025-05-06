@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
 import { Link, Redirect, Stack, useLocalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
 import { Image, SafeAreaView, View } from "react-native";
 
 import { Badge } from "@/components/badge";
@@ -11,21 +11,28 @@ import { fetchPokemonDetails } from "@/api/pokemon";
 
 import { Colors } from "@/constants/colors";
 
+import type { PokemonDetails } from "@/types/pokemon";
+
 export default function PokemonScreen() {
   const { id } = useLocalSearchParams();
   if (!id) return <Redirect href="/" />;
 
-  const { data, isLoading, error, isError } = useQuery({
-    queryKey: ["pokemonDetails"],
-    queryFn: () => fetchPokemonDetails(id.toString()),
-    enabled: !!id,
-  });
+  const [pokemon, setPokemon] = useState<PokemonDetails>();
+
+  useEffect(() => {
+    const fetchDetails = async () => {
+      const data = await fetchPokemonDetails(id as string);
+      setPokemon(data);
+    };
+
+    fetchDetails();
+  }, []);
 
   const getColorFromType = (type: string) => {
     return Colors.pokemon[type as keyof typeof Colors.pokemon];
   };
 
-  const colorType = getColorFromType(data?.types[0].type.name!);
+  const colorType = getColorFromType(pokemon?.types[0].type.name!);
 
   const about = [
     { icon: <></>, value: "6.9 kg", label: "Weight" },
@@ -46,9 +53,8 @@ export default function PokemonScreen() {
     <>
       <Stack.Screen
         options={{
-          headerTitle: () => (
-            <Text style={{ fontSize: 28, fontWeight: "bold", textTransform: "capitalize" }}>{data?.name}</Text>
-          ),
+          headerTitle: pokemon?.name ? pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1) : "Pokémon",
+          headerTitleStyle: { color: Colors.grayscale.white, fontSize: 26, fontWeight: "bold" },
           headerLeft: () => (
             <Link href="/" dismissTo>
               <Icons.chevronleft fill={Colors.grayscale.white} />
@@ -79,7 +85,7 @@ export default function PokemonScreen() {
           }}
         >
           <Image
-            source={{ uri: data?.sprites.other?.["official-artwork"].front_default }}
+            source={{ uri: pokemon?.sprites.other?.["official-artwork"].front_default }}
             style={{
               width: 200,
               height: 200,
@@ -89,7 +95,7 @@ export default function PokemonScreen() {
           />
           <View style={{ flex: 1, marginTop: -40, gap: 15 }}>
             <View style={{ justifyContent: "center", flexDirection: "row", gap: 18 }}>
-              {data?.types.map((item, index) => (
+              {pokemon?.types.map((item, index) => (
                 <Badge color={getColorFromType(item.type.name)} style={{ textTransform: "capitalize" }} key={index}>
                   {item.type.name}
                 </Badge>
