@@ -9,3 +9,10 @@
 ## Design 🤌
 
 The [design](https://www.figma.com/community/file/979132880663340794) was made by [Ricardo Schiniegoski](https://ricardohs.com.br).
+
+## Preview
+
+<div style="display: flex; gap:20px;">
+  <img width="100%" src=".github/assets/home.png" alt="Home page.">
+  <img width="100%" src=".github/assets/details.png" alt="Details page.">
+</div>
